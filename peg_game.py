@@ -12,6 +12,7 @@ class BaseSolitaireGame:
         self.board_type = board_type
         self.size = size
         self.move_count = 0
+        self.move_history = []
         self.board = self._build_board()
 
     # ---------------- Board Builders ----------------
@@ -62,7 +63,7 @@ class BaseSolitaireGame:
     def in_bounds(self, r, c):
         return 0 <= r < self.size and 0 <= c < self.size and self.board[r][c] != -1
 
-    def try_move(self, sr, sc, dr, dc):
+    def try_move(self, sr, sc, dr, dc, save_to_history=True):
         if not self.in_bounds(sr, sc) or not self.in_bounds(dr, dc):
             return False
 
@@ -85,6 +86,14 @@ class BaseSolitaireGame:
         self.board[mr][mc] = 0
         self.board[dr][dc] = 1
         self.move_count += 1
+
+        if save_to_history:
+            self.move_history.append({
+                "from": [sr, sc],
+                "over": [mr, mc],
+                "to": [dr, dc]
+            })
+
         return True
 
     def valid_moves_from(self, sr, sc):

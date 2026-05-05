@@ -22,6 +22,29 @@ def test_manual_valid_move_updates_board():
     assert game.move_count == 1
 
 
+def test_manual_move_is_recorded():
+    game = ManualSolitaireGame("English", 7)
+    game.board[3][1] = 1
+    game.board[3][2] = 1
+    game.board[3][3] = 0
+
+    game.make_manual_move(3, 1, 3, 3)
+
+    assert game.move_history == [{"from": [3, 1], "over": [3, 2], "to": [3, 3]}]
+
+
+def test_replay_move_can_skip_history():
+    game = ManualSolitaireGame("English", 7)
+    game.board[3][1] = 1
+    game.board[3][2] = 1
+    game.board[3][3] = 0
+
+    game.try_move(3, 1, 3, 3, save_to_history=False)
+
+    assert game.move_history == []
+    assert game.move_count == 1
+
+
 def test_manual_game_over_detection():
     game = ManualSolitaireGame("English", 7)
 
@@ -43,6 +66,7 @@ def test_automated_move_changes_board_when_move_exists():
     assert moved is True
     assert game.board != before
     assert game.move_count == 1
+    assert len(game.move_history) == 1
 
 
 def test_automated_game_over_when_no_moves_exist():
@@ -67,3 +91,4 @@ def test_randomize_changes_board_state_legally():
 
     assert changed is True
     assert game.board != before
+    assert len(game.move_history) > 0
